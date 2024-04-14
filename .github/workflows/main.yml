@@ -19,7 +19,14 @@ jobs:
       - name: Build and run Docker container
         run: |
           docker-compose up -d
+
+      - name: Run unit tests
+        run: |
           docker-compose exec -T nestjs_app yarn test
+
+      - name: Run integration tests
+        run: |
+          docker-compose exec -T nestjs_app yarn test:e2e
 
       - name: Shutdown Docker container
         run: docker-compose down
