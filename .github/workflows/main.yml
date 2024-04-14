@@ -1,0 +1,25 @@
+name: Main CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build and run Docker container
+        run: |
+          docker-compose up -d
+          docker-compose exec nestjs_app yarn test
+
+      - name: Shutdown Docker container
+        run: docker-compose down
