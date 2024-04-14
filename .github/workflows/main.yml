@@ -18,15 +18,16 @@ jobs:
 
       - name: Build and run Docker container
         run: |
+          cp env/.env.example .env
           docker-compose up -d
 
       - name: Run unit tests
         run: |
-          docker-compose exec -T nestjs_app yarn test
+          docker-compose exec -T nestjs_app_main yarn test
 
       - name: Run integration tests
         run: |
-          docker-compose exec -T nestjs_app yarn test:e2e
+          docker-compose --env-file env/.test.env -f docker-compose.test.yml up nestjs_app_test
 
       - name: Shutdown Docker container
         run: docker-compose down

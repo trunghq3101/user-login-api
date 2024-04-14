@@ -1,0 +1,22 @@
+services:
+  mongodb_test:
+    container_name: mongodb_test
+    extends:
+      file: docker-compose.common.yml
+      service: mongodb
+    volumes:
+      - mongodb_data_test:/data/db
+
+  nestjs_app_test:
+    container_name: nestjs_app_test
+    extends:
+      file: docker-compose.common.yml
+      service: nestjs_app
+    environment:
+      MONGO_HOST: mongodb_test
+    command: yarn test:e2e
+    depends_on:
+      - mongodb_test
+
+volumes:
+  mongodb_data_test:

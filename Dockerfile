@@ -16,5 +16,8 @@ COPY . .
 # Expose port 3000
 EXPOSE 3000
 
+# Build the application
+RUN yarn build
+
 # Command to run the application
-CMD ["yarn", "start:dev"]
+CMD ["yarn", "start:prod"]
