@@ -24,4 +24,4 @@ services:
       MONGO_AUTH_DB_PASSWORD: ${MONGO_AUTH_DB_PASSWORD}
       PORT: ${PORT}
     ports:
-      - '${PORT}:3000'
+      - '${PORT}:${PORT}'
