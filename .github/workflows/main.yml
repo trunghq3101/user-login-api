@@ -24,12 +24,14 @@ jobs:
       - name: Run unit tests
         run: |
           docker-compose exec -T nestjs_app_main yarn test
+          docker-compose stop
 
       - name: Run integration tests
         run: |
           docker-compose --env-file env/.test.env -f docker-compose.test.yml up nestjs_app_test
+          docker-compose -f docker-compose.test.yml stop
 
-      - name: Shutdown Docker container
+      - name: Cleanup Docker containers
         run: |
-          docker-compose -f docker-compose.test.yml down mongodb_test -v
+          docker-compose -f docker-compose.test.yml down -v
           docker-compose down -v
