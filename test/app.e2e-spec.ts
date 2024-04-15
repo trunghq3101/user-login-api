@@ -1,21 +1,27 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import mongoose from 'mongoose';
+import { AppModule } from 'src/app.module';
+import { configureApp } from 'src/shared/configure_app';
+import { SharedTestModule } from 'src/shared/shared_test.module';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
+      imports: [SharedTestModule, AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+    configureApp(app);
+
     await app.init();
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
+    await mongoose.connection.close();
     await app.close();
   });
 

@@ -15,6 +15,11 @@ services:
     environment:
       MONGO_HOST: mongodb_main
       LOG_LEVEL: log
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        npx nest start --entryFile main.seeder
+        yarn start:prod
     depends_on:
       - mongodb_main
 

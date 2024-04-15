@@ -1,7 +1,8 @@
-import { LogLevel, VersioningType } from '@nestjs/common';
+import { LogLevel, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { configureApp } from './shared/configure_app';
 
 async function bootstrap() {
   const allLogLevels = [
@@ -19,11 +20,12 @@ async function bootstrap() {
     logger: logLevels,
   });
 
-  app.enableVersioning({
-    type: VersioningType.URI,
-  });
+  configureApp(app);
 
   const config = app.get(ConfigService);
-  await app.listen(config.get<number>('PORT') || 3000);
+  const port = config.get<number>('PORT') || 3000;
+  await app.listen(port);
+
+  Logger.log(`Server running on http://localhost:${port}`, 'Bootstrap');
 }
 bootstrap();
