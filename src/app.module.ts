@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 
 const testEnvFilePath = 'env/.test.env';
 const envFilePath = 'env/.env';
@@ -32,6 +33,7 @@ const isTestEnv = process.env.NODE_ENV == 'test';
       },
       inject: [ConfigService],
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
