@@ -19,7 +19,7 @@ describe('AuthController (e2e)', () => {
     await app.close();
   });
 
-  it('/auth/login (POST)', () => {
+  it('/v1/auth/login (POST)', () => {
     return request(app.getHttpServer())
       .post('/auth/login')
       .send({
@@ -32,7 +32,7 @@ describe('AuthController (e2e)', () => {
       });
   });
 
-  it('/auth/login (POST) - missing fields', async () => {
+  it('/v1/auth/login (POST) - missing fields', async () => {
     const badRequests = [{}, { username: 'test' }, { password: 'test' }];
 
     for (const body of badRequests) {
