@@ -14,10 +14,13 @@ async function bootstrap() {
   ] as LogLevel[];
   const logLevel = (process.env.LOG_LEVEL || 'verbose') as LogLevel;
   const logLevels = allLogLevels.slice(0, allLogLevels.indexOf(logLevel) + 1);
+
   const app = await NestFactory.create(AppModule, {
     logger: logLevels,
   });
+
   const config = app.get(ConfigService);
+
   await app.listen(config.get<number>('PORT') || 3000);
 }
 bootstrap();

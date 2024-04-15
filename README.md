@@ -21,7 +21,7 @@ docker-compose exec nestjs_app_main yarn test
 2. Run integration tests:
 
 ```bash
-docker-compose --env-file env/.test.env -f docker-compose.test.yml up nestjs_app_test
+docker-compose --env-file env/.test.env -f docker-compose.test.yml up nestjs_app_test --build
 ```
 
 ## Option 2: Running the Application Locally
