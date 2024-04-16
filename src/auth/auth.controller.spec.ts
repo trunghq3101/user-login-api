@@ -15,6 +15,7 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: {
             validate: jest.fn(),
+            login: jest.fn(),
           },
         },
       ],
@@ -30,7 +31,8 @@ describe('AuthController', () => {
         username: 'test',
         password: 'test',
       };
-      jest.spyOn(authService, 'validate').mockResolvedValue(true);
+      jest.spyOn(authService, 'validate').mockResolvedValue({} as any);
+      jest.spyOn(authService, 'login').mockResolvedValue('token');
 
       const result = await authController.login(loginRequest);
 
@@ -42,7 +44,7 @@ describe('AuthController', () => {
         username: 'test',
         password: 'test',
       };
-      jest.spyOn(authService, 'validate').mockResolvedValue(false);
+      jest.spyOn(authService, 'validate').mockResolvedValue(null);
 
       await expect(authController.login(loginRequest)).rejects.toThrow(
         'Invalid credentials',
