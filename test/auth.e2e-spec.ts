@@ -1,7 +1,9 @@
 import { INestApplication } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import mongoose from 'mongoose';
 import { AuthModule } from 'src/auth/auth.module';
+import { User } from 'src/schema/user.schema';
 import { UserSeed } from 'src/schema/user.seed';
 import { configureApp } from 'src/shared/configure_app';
 import { SharedTestModule } from 'src/shared/shared_test.module';
@@ -12,7 +14,7 @@ const userData = [
     username: 'test',
     password: 'test',
   },
-];
+] as User[];
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
@@ -46,8 +48,11 @@ describe('AuthController (e2e)', () => {
           password: 'test',
         })
         .expect(201)
-        .expect({
-          access_token: '',
+        .expect((res) => {
+          const { access_token } = res.body;
+          expect(access_token).toBeDefined();
+          const verified = app.get(JwtService).verify(access_token);
+          expect(verified.username).toBe('test');
         });
     });
 

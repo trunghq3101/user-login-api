@@ -17,3 +17,11 @@ export const mongooseFactory = async (config: ConfigService) => {
     uri: mongoUri,
   };
 };
+
+export const jwtFactory = async (config: ConfigService) => {
+  return {
+    global: true,
+    secret: config.get('JWT_SECRET'),
+    signOptions: { expiresIn: '60s' },
+  };
+};

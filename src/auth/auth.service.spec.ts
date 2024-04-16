@@ -1,3 +1,4 @@
+import { JwtService } from '@nestjs/jwt';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { User } from 'src/schema/user.schema';
@@ -16,6 +17,12 @@ describe('AuthService', () => {
             findOne: jest.fn(),
           },
         },
+        {
+          provide: JwtService,
+          useValue: {
+            signAsync: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -27,31 +34,28 @@ describe('AuthService', () => {
   });
 
   describe('validate()', () => {
-    it('returns true when user is provided and credentials match', async () => {
-      const user = { username: 'test', password: 'test' };
-      const result = await service.validate('test', 'test', user);
-      expect(result).toBe(true);
-    });
-
-    it('returns false when user is provided and credentials do not match', async () => {
-      const user = { username: 'test', password: 'test' };
-      const result = await service.validate('test', 'wrong', user);
-      expect(result).toBe(false);
-    });
-
-    it('returns true when user is not provided and it finds a matched user', async () => {
+    it('returns matched user', async () => {
       const user = {};
       jest
         .spyOn(service['userModel'], 'findOne')
         .mockResolvedValue(user as any);
       const result = await service.validate('', '');
-      expect(result).toBe(true);
+      expect(result).toBe(user);
     });
 
-    it('returns false when user is not provided and it cannot find a matched user', async () => {
+    it('returns null when user not found', async () => {
       jest.spyOn(service['userModel'], 'findOne').mockResolvedValue(null);
       const result = await service.validate('', '');
-      expect(result).toBe(false);
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('login', () => {
+    it('returns token', async () => {
+      const token = 'token';
+      jest.spyOn(service['jwtService'], 'signAsync').mockResolvedValue(token);
+      const result = await service.login({} as any);
+      expect(result).toBe(token);
     });
   });
 });

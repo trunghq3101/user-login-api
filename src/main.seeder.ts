@@ -5,12 +5,12 @@ import { SeedsModule } from './shared/seeds/seeds.module';
 
 const userData = [
   {
-    username: '',
-    password: '',
+    username: 'test',
+    password: 'test',
   },
   {
-    username: '',
-    password: '',
+    username: 'test2',
+    password: 'test2',
   },
 ] as User[];
 
