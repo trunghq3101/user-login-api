@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { SeedsModule } from './shared/seeds/seeds.module';
-import { User } from './user/user.schema';
 import { UserSeed } from './user/user.seed';
 
 const userData = [
@@ -12,7 +11,15 @@ const userData = [
     username: 'test2',
     password: 'test2',
   },
-] as User[];
+  {
+    username: 'test3',
+    password: 'test3',
+  },
+  {
+    username: 'test4',
+    password: 'test4',
+  },
+] as any[];
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(SeedsModule);

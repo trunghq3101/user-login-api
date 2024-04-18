@@ -1,5 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 import {
   IndefiniteLockError,
   InvalidCredentialsError,
@@ -27,10 +28,10 @@ export class AuthService {
       throw new InternalServerErrorException('User should be unlocked');
     }
 
-    const passwordMatched = unlockedUser.password == password;
+    const isMatch = await bcrypt.compare(password, unlockedUser.password);
 
     // Success attempt
-    if (passwordMatched) {
+    if (isMatch) {
       await this.loginAttemptService.clear(unlockedUser.id);
       return {
         username: unlockedUser.username,

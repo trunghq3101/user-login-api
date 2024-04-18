@@ -83,3 +83,37 @@ yarn test
 docker-compose --env-file env/.test.env -f docker-compose.test.yml up mongodb_test -d
 yarn test:e2e
 ```
+
+## How to use
+
+```bash
+curl  -X POST \
+  'http://localhost:3113/v1/auth/login' \
+  --header 'Accept: */*' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "username": "test",
+  "password": "test"
+}'
+```
+
+### Test users:
+
+```
+  {
+    username: 'test',
+    password: 'test',
+  },
+  {
+    username: 'test2',
+    password: 'test2',
+  },
+  {
+    username: 'test3',
+    password: 'test3',
+  },
+  {
+    username: 'test4',
+    password: 'test4',
+  },
+```

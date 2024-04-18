@@ -1,5 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { hashSync } from 'bcrypt';
 import { LoginAttemptService } from 'src/login-attempt/login-attempt.service';
 import { LockDuration } from 'src/user/user.schema';
 import { UserService } from 'src/user/user.service';
@@ -26,7 +27,7 @@ describe('AuthService', () => {
   const user = {
     id: 'id',
     username: 'username',
-    password: 'password',
+    password: hashSync('password', 10),
     lockDuration: LockDuration.None,
   } as any;
 
