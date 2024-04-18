@@ -20,7 +20,7 @@ curl  -X POST \
 }'
 ```
 
-### Test users:
+### List of test users:
 
 ```
   {
@@ -100,7 +100,13 @@ yarn install
 docker-compose --env-file env/.env up mongodb -d
 ```
 
-6. Start the application in development mode:
+6. Generate test data:
+
+```bash
+npx nest start --entryFile main.seeder
+```
+
+7. Start the application in development mode:
 
 ```bash
 yarn start:dev
