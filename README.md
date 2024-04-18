@@ -53,6 +53,8 @@ To build and start the application with Docker, execute the following command:
 docker-compose --env-file env/.env up -d --build
 ```
 
+The application will be accessible at `http://localhost:3113`.
+
 ### Running Tests in Docker
 
 1. Run unit tests:
