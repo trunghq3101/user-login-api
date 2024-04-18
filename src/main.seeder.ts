@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { SeedsModule } from './shared/seeds/seeds.module';
+import { AppSeederModule } from './app-seeder.module';
 import { UserSeed } from './user/user.seed';
 
 const userData = [
@@ -22,7 +22,7 @@ const userData = [
 ] as any[];
 
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(SeedsModule);
+  const app = await NestFactory.createApplicationContext(AppSeederModule);
   const userSeed = app.get(UserSeed);
   await userSeed.seed(userData);
   app.close();

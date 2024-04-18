@@ -9,8 +9,8 @@ import {
   TimedLockError,
 } from 'src/errors';
 import { LoginAttemptsSeed } from 'src/login-attempt/login-attempt.seed';
-import { configureApp } from 'src/shared/configure_app';
-import { SharedTestModule } from 'src/shared/shared_test.module';
+import { configureApp } from 'src/shared/configure-app';
+import { SharedTestModule } from 'src/shared/shared-test.module';
 import {
   minutesAgoFromNow,
   minutesLater,
@@ -173,6 +173,7 @@ describe('AuthController (e2e)', () => {
       const secondAttemptAfterUnlocked = minutesLater(mockDateOrigin, 6);
       const thirdAttemptAfterUnlocked = minutesLater(mockDateOrigin, 7);
       const firstAttemptAfterLocked = minutesLater(mockDateOrigin, 8);
+      const secondAttemptAfterLocked = minutesLater(mockDateOrigin, 30);
 
       jest
         .spyOn(global.Date, 'now')
@@ -222,6 +223,21 @@ describe('AuthController (e2e)', () => {
       jest
         .spyOn(global.Date, 'now')
         .mockImplementation(() => firstAttemptAfterLocked.getTime());
+
+      await request(app.getHttpServer())
+        .post(path)
+        .send({
+          username: 'FiveMinutesLock',
+          password: 'FiveMinutesLock',
+        })
+        .expect(400)
+        .expect((res) => {
+          expect(res.body.error).toBe(IndefiniteLockError.name);
+        });
+
+      jest
+        .spyOn(global.Date, 'now')
+        .mockImplementation(() => secondAttemptAfterLocked.getTime());
 
       await request(app.getHttpServer())
         .post(path)

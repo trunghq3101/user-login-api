@@ -2,7 +2,7 @@ import { LogLevel, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { configureApp } from './shared/configure_app';
+import { configureApp } from './shared/configure-app';
 
 async function bootstrap() {
   const allLogLevels = [

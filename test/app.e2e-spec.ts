@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import mongoose from 'mongoose';
 import { AppModule } from 'src/app.module';
-import { configureApp } from 'src/shared/configure_app';
-import { SharedTestModule } from 'src/shared/shared_test.module';
+import { configureApp } from 'src/shared/configure-app';
+import { SharedTestModule } from 'src/shared/shared-test.module';
 import * as request from 'supertest';
 
 describe('AppController (e2e)', () => {
