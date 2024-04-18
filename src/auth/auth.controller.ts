@@ -22,7 +22,7 @@ export class AuthController {
     });
 
     return {
-      access_token: accessToken,
+      accessToken,
     };
   }
 }

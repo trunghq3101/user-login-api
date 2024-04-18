@@ -10,5 +10,5 @@ export class LoginRequest {
 
 export class LoginResponse {
   @IsNotEmpty()
-  access_token: string;
+  accessToken: string;
 }

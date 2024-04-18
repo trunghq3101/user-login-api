@@ -34,7 +34,7 @@ describe('AuthController', () => {
         password: 'password',
       });
 
-      expect(result).toEqual({ access_token: 'access_token' });
+      expect(result).toEqual({ accessToken: 'access_token' });
     });
 
     it('throws error when attemptLogin failed', async () => {
