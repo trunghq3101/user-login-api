@@ -1,7 +1,6 @@
 services:
   mongodb:
     image: mongo:latest
-    restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -17,11 +16,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    restart: always
     environment:
       MONGO_PORT: 27017
       MONGO_AUTH_DB_USERNAME: ${MONGO_AUTH_DB_USERNAME}
       MONGO_AUTH_DB_PASSWORD: ${MONGO_AUTH_DB_PASSWORD}
       PORT: ${PORT}
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - '${PORT}:${PORT}'

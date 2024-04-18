@@ -15,7 +15,7 @@ docker-compose --env-file env/.env up -d --build
 1. Run unit tests:
 
 ```bash
-docker-compose exec nestjs_app_main yarn test
+docker-compose exec --env-file env/.env nestjs_app_main yarn test
 ```
 
 2. Run integration tests:
