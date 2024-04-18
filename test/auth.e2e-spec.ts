@@ -81,7 +81,7 @@ describe('AuthController (e2e)', () => {
         })
         .expect(201)
         .expect((res) => {
-          const { access_token } = res.body;
+          const { access_token } = res.body.data;
           expect(access_token).toBeDefined();
           const verified = app.get(JwtService).verify(access_token);
           expect(verified.username).toBe('test');
