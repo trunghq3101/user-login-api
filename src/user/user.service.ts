@@ -1,6 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { IndefiniteLockError, TimedLockError } from 'src/errors';
 import { minutesLater } from 'src/shared/utils';
 import { LockDuration, User, UserDocument } from 'src/user/user.schema';
 
@@ -12,22 +17,18 @@ export class UserService {
     let user: UserDocument = await this.userModel.findOne({ username }).exec();
 
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new BadRequestException('Invalid credentials');
     }
 
     if (user.lockDuration === LockDuration.Indefinitely) {
-      throw new UnauthorizedException(
-        'Too many failed attempts. Account is locked. Please contact support',
-      );
+      throw new IndefiniteLockError();
     }
 
     if (user.lockedUntil) {
       const remainingMsUntilUnlock = await this._remainingMsUntilUnlock(user);
 
       if (remainingMsUntilUnlock > 0) {
-        throw new UnauthorizedException(
-          `Account is locked. Please try again in ${remainingMsUntilUnlock}ms`,
-        );
+        throw new TimedLockError(remainingMsUntilUnlock);
       } else {
         user = await this.unlockTimedLockUser(user);
       }
@@ -84,10 +85,10 @@ export class UserService {
 
   private async _remainingMsUntilUnlock(user: User): Promise<number> {
     if (user.lockDuration === LockDuration.Indefinitely) {
-      throw new Error('User is locked indefinitely');
+      throw new InternalServerErrorException('User is locked indefinitely');
     }
     if (user.lockedUntil === null) {
-      throw new Error('User is not locked');
+      throw new InternalServerErrorException('User is not locked');
     }
     return user.lockedUntil.getTime() - Date.now();
   }

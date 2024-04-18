@@ -1,14 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import {
+  IndefiniteLockError,
+  InvalidCredentialsError,
+  TimedLockError,
+} from 'src/errors';
 import { LoginAttemptService } from 'src/login-attempt/login-attempt.service';
 import { LockDuration, User } from 'src/user/user.schema';
 import { UserService } from 'src/user/user.service';
-
-export enum LoginAttemptValidationResult {
-  Valid,
-  Invalid,
-  TooManyFailedAttempts,
-}
 
 @Injectable()
 export class AuthService {
@@ -24,8 +23,8 @@ export class AuthService {
   ): Promise<Partial<User>> {
     const unlockedUser = await this.userService.getUnlockedUser(username);
 
-    if (unlockedUser.lockDuration) {
-      throw new Error('User should be unlocked');
+    if (unlockedUser.lockDuration !== LockDuration.None) {
+      throw new InternalServerErrorException('User should be unlocked');
     }
 
     const passwordMatched = unlockedUser.password == password;
@@ -49,20 +48,24 @@ export class AuthService {
 
     // Not locked yet
     if (numberOfConsecutiveFailedAttemptsWithin5Minutes < 3) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new InvalidCredentialsError(
+        3 - numberOfConsecutiveFailedAttemptsWithin5Minutes,
+      );
     }
 
     // Lock user
-    if (unlockedUser.lockDuration === LockDuration.None) {
-      const lockedUser = await this.userService.lockUser(unlockedUser);
-      if (lockedUser.lockDuration === LockDuration.None) {
-        throw new Error('User should be locked');
-      }
-      await this.loginAttemptService.clear(lockedUser.id);
+    const lockedUser = await this.userService.lockUser(unlockedUser);
+    if (lockedUser.lockDuration === LockDuration.None) {
+      throw new InternalServerErrorException('User should be locked');
     }
-    throw new UnauthorizedException(
-      'Too many failed attempts. Account is locked',
-    );
+    await this.loginAttemptService.clear(lockedUser.id);
+
+    switch (lockedUser.lockDuration) {
+      case LockDuration.FiveMin:
+        throw new TimedLockError(5 * 60 * 1000);
+      case LockDuration.Indefinitely:
+        throw new IndefiniteLockError();
+    }
   }
 
   async login(user: Partial<User>): Promise<string> {

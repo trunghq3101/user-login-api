@@ -3,6 +3,11 @@ import { JwtService } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import mongoose from 'mongoose';
 import { AuthModule } from 'src/auth/auth.module';
+import {
+  IndefiniteLockError,
+  InvalidCredentialsError,
+  TimedLockError,
+} from 'src/errors';
 import { LoginAttemptsSeed } from 'src/login-attempt/login-attempt.seed';
 import { configureApp } from 'src/shared/configure_app';
 import { SharedTestModule } from 'src/shared/shared_test.module';
@@ -90,7 +95,7 @@ describe('AuthController (e2e)', () => {
           username: 'test',
           password: 'wrong',
         })
-        .expect(401);
+        .expect(400);
     });
 
     it('indefinitely locked account', () => {
@@ -100,11 +105,9 @@ describe('AuthController (e2e)', () => {
           username: 'IndefinitelyLock',
           password: 'IndefinitelyLock',
         })
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.message).toBe(
-            'Too many failed attempts. Account is locked. Please contact support',
-          );
+          expect(res.body.error).toBe(IndefiniteLockError.name);
         });
     });
 
@@ -127,11 +130,9 @@ describe('AuthController (e2e)', () => {
           username: 'test',
           password: 'wrong',
         })
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.message).toBe(
-            'Too many failed attempts. Account is locked',
-          );
+          expect(res.body.error).toBe(TimedLockError.name);
         });
     });
 
@@ -149,11 +150,9 @@ describe('AuthController (e2e)', () => {
           username: 'FiveMinutesLock',
           password: 'FiveMinutesLock',
         })
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.message).toBe(
-            'Account is locked. Please try again in 60000ms',
-          );
+          expect(res.body.error).toBe(TimedLockError.name);
         });
 
       jest
@@ -185,9 +184,9 @@ describe('AuthController (e2e)', () => {
           username: 'FiveMinutesLock',
           password: 'wrong',
         })
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.message).toBe('Invalid credentials');
+          expect(res.body.error).toBe(InvalidCredentialsError.name);
         });
 
       jest
@@ -200,9 +199,9 @@ describe('AuthController (e2e)', () => {
           username: 'FiveMinutesLock',
           password: 'wrong',
         })
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.message).toBe('Invalid credentials');
+          expect(res.body.error).toBe(InvalidCredentialsError.name);
         });
 
       jest
@@ -215,11 +214,9 @@ describe('AuthController (e2e)', () => {
           username: 'FiveMinutesLock',
           password: 'wrong',
         })
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.message).toBe(
-            'Too many failed attempts. Account is locked',
-          );
+          expect(res.body.error).toBe(IndefiniteLockError.name);
         });
 
       jest
@@ -232,11 +229,9 @@ describe('AuthController (e2e)', () => {
           username: 'FiveMinutesLock',
           password: 'FiveMinutesLock',
         })
-        .expect(401)
+        .expect(400)
         .expect((res) => {
-          expect(res.body.message).toBe(
-            'Too many failed attempts. Account is locked. Please contact support',
-          );
+          expect(res.body.error).toBe(IndefiniteLockError.name);
         });
     });
 
@@ -260,9 +255,9 @@ describe('AuthController (e2e)', () => {
             username: 'test',
             password: 'wrong',
           })
-          .expect(401)
+          .expect(400)
           .expect((res) => {
-            expect(res.body.message).toBe('Invalid credentials');
+            expect(res.body.error).toBe(InvalidCredentialsError.name);
           });
       });
 
@@ -301,9 +296,9 @@ describe('AuthController (e2e)', () => {
             username: 'test',
             password: 'wrong',
           })
-          .expect(401)
+          .expect(400)
           .expect((res) => {
-            expect(res.body.message).toBe('Invalid credentials');
+            expect(res.body.error).toBe(InvalidCredentialsError.name);
           });
       });
     });

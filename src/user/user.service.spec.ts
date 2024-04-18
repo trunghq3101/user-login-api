@@ -51,7 +51,7 @@ describe('UserService', () => {
         }),
       });
       await expect(service.getUnlockedUser('username')).rejects.toThrow(
-        'Too many failed attempts. Account is locked. Please contact support',
+        'Too many failed attempts. Account is locked indefinitely.',
       );
     });
 
@@ -67,7 +67,7 @@ describe('UserService', () => {
       });
 
       await expect(service.getUnlockedUser('username')).rejects.toThrow(
-        'Account is locked. Please try again in 180000ms',
+        'Too many failed attempts. Please try again after 180000ms.',
       );
     });
 

@@ -27,6 +27,7 @@ describe('AuthService', () => {
     id: 'id',
     username: 'username',
     password: 'password',
+    lockDuration: LockDuration.None,
   } as any;
 
   beforeEach(async () => {
@@ -93,7 +94,9 @@ describe('AuthService', () => {
 
         await expect(
           service.attemptLogin('username', 'wrongPassword'),
-        ).rejects.toThrow('Too many failed attempts. Account is locked');
+        ).rejects.toThrow(
+          'Too many failed attempts. Please try again after 300000ms.',
+        );
       });
     });
   });
