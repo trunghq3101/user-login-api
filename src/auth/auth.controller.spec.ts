@@ -1,11 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
-import { LoginRequest } from './auth.dto';
 import { AuthService } from './auth.service';
+
+const authService = {
+  attemptLogin: jest.fn(),
+  login: jest.fn(),
+};
 
 describe('AuthController', () => {
   let authController: AuthController;
-  let authService: AuthService;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -13,42 +16,52 @@ describe('AuthController', () => {
       providers: [
         {
           provide: AuthService,
-          useValue: {
-            validate: jest.fn(),
-            login: jest.fn(),
-          },
+          useValue: authService,
         },
       ],
     }).compile();
 
     authController = app.get<AuthController>(AuthController);
-    authService = app.get(AuthService);
   });
 
   describe('login', () => {
-    it('should return an access token when valid credentials is provided', async () => {
-      const loginRequest: LoginRequest = {
-        username: 'test',
-        password: 'test',
-      };
-      jest.spyOn(authService, 'validate').mockResolvedValue({} as any);
-      jest.spyOn(authService, 'login').mockResolvedValue('token');
+    it('success', async () => {
+      authService.attemptLogin = jest.fn().mockResolvedValue({});
+      authService.login = jest.fn().mockResolvedValue('access_token');
 
-      const result = await authController.login(loginRequest);
+      const result = await authController.login({
+        username: 'username',
+        password: 'password',
+      });
 
-      expect(result).toHaveProperty('access_token');
+      expect(result).toEqual({ access_token: 'access_token' });
     });
 
-    it('should throw an error when invalid credentials is provided', async () => {
-      const loginRequest: LoginRequest = {
-        username: 'test',
-        password: 'test',
-      };
-      jest.spyOn(authService, 'validate').mockResolvedValue(null);
+    it('throws error when attemptLogin failed', async () => {
+      authService.attemptLogin = jest.fn().mockImplementation(() => {
+        throw new Error();
+      });
 
-      await expect(authController.login(loginRequest)).rejects.toThrow(
-        'Invalid credentials',
-      );
+      await expect(
+        authController.login({
+          username: 'username',
+          password: 'password',
+        }),
+      ).rejects.toThrow();
+    });
+
+    it('throws error when login failed', async () => {
+      authService.attemptLogin = jest.fn().mockResolvedValue({});
+      authService.login = jest.fn().mockImplementation(() => {
+        throw new Error();
+      });
+
+      await expect(
+        authController.login({
+          username: 'username',
+          password: 'password',
+        }),
+      ).rejects.toThrow();
     });
   });
 });

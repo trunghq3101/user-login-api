@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { User } from './schema/user.schema';
-import { UserSeed } from './schema/user.seed';
 import { SeedsModule } from './shared/seeds/seeds.module';
+import { User } from './user/user.schema';
+import { UserSeed } from './user/user.seed';
 
 const userData = [
   {
